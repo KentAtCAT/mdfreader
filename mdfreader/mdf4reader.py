@@ -18,6 +18,7 @@ mdf4reader
 --------------------------
 
 """
+from re import search
 from struct import Struct
 from struct import pack, unpack as structunpack
 from math import pow
@@ -2338,7 +2339,11 @@ def _formula_conversion(vector, formula):
         from sympy import lambdify, symbols
     except:
         warn('Please install sympy to convert channel ')
-    X = symbols('X')
+    # try to figure out if the formula is using lower or upcase "X" in formula
+    if search("[^abc\d]*x[^abc\d]*", formula):
+        X = symbols('x')
+    else:
+        X = symbols('X')
     expr = lambdify(X, formula, modules='numpy', dummify=False)
     return expr(vector)
 
